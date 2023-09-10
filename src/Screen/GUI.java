@@ -46,7 +46,6 @@ public class GUI implements java.io.Serializable {
         TopInformationPanel = new JPanel();
         initTopInformationPanel();
 
-
         MainFrame.pack();
         MainFrame.setVisible(true);
 
@@ -66,12 +65,12 @@ public class GUI implements java.io.Serializable {
         try {
             StopWatch = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/stopwatch.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Mine Icon Is Missing!");
+            ShowErrorMessage("Mine Icon", "Stop Watch Icon Is Missing!");
         }
         try {
             Player = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/player.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Mine Icon Is Missing!");
+            ShowErrorMessage("Mine Icon", "Player Icon Is Missing!");
         }
         try {
             NewIcon = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/New.png")));
@@ -223,7 +222,7 @@ public class GUI implements java.io.Serializable {
         GridPanel.add(Letters[0]);
         for (int i = 0; i < Grid.columns; i++) {
             Letters[i] = new JButton();
-            Letters[i].setText("" + (char) (i + 65));
+            Letters[i].setText(String.valueOf((char) (i + 65)));
             Letters[i].setEnabled(false);
             GridPanel.add(Letters[i]);
         }
@@ -232,7 +231,7 @@ public class GUI implements java.io.Serializable {
         for (int i = 0; i < Grid.rows; i++) {
             //Adding Numbers Column
             Numbers[i] = new JButton();
-            Numbers[i].setText("" + (i + 1));
+            Numbers[i].setText(String.valueOf(i + 1));
             Numbers[i].setEnabled(false);
             GridPanel.add(Numbers[i]);
 
@@ -284,52 +283,6 @@ public class GUI implements java.io.Serializable {
         CountDownTimer.start();
     }
 
-    public static class CellClickActionListener implements MouseListener {
-        Cell ClickCell;
-
-        public CellClickActionListener(Cell ClickCell) {
-            this.ClickCell = ClickCell;
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            /*Rules.setFlagRole(false);
-            if (e.getButton() == MouseEvent.BUTTON3) {
-                Rules.setFlagRole(true);
-            }
-            if (!ClickCell.isRevealed() && !Rules.GameOver) {
-                new InputCellHandler(ClickCell).start();
-            }*/
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-            Rules.setFlagRole(false);
-            if (e.getButton() == MouseEvent.BUTTON3) {
-                Rules.setFlagRole(true);
-            }
-            if (!ClickCell.isRevealed() && !Rules.GameOver) {
-                new InputCellHandler(ClickCell).start();
-            }
-
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-
-        }
-    }
-
     static public void UpdateGrid() {
         for (int i = 0; i < Grid.rows; i++) {
             for (int j = 0; j < Grid.columns; j++) {
@@ -342,7 +295,7 @@ public class GUI implements java.io.Serializable {
                         Grid.cells[i][j].setFocusPainted(false);
                         Grid.cells[i][j].setContentAreaFilled(false);
                     } else {
-                        Grid.cells[i][j].setText(Grid.cells[i][j].getValue() + "");
+                        Grid.cells[i][j].setText(String.valueOf(Grid.cells[i][j].getValue()));
                         ColorNumbers(Grid.cells[i][j]);
                         Grid.cells[i][j].setBackground(Color.WHITE);
                         Grid.cells[i][j].setFocusPainted(false);
@@ -377,7 +330,7 @@ public class GUI implements java.io.Serializable {
                 cell.setFocusPainted(false);
                 cell.setContentAreaFilled(false);
             } else {
-                cell.setText(cell.getValue() + "");
+                cell.setText(String.valueOf(cell.getValue()));
                 ColorNumbers(cell);
                 cell.setBackground(Color.WHITE);
                 cell.setFocusPainted(false);
@@ -698,5 +651,46 @@ public class GUI implements java.io.Serializable {
         difficultyDialog.setVisible(true);
 
 
+    }
+
+    public static class CellClickActionListener implements MouseListener {
+        Cell ClickCell;
+
+        public CellClickActionListener(Cell ClickCell) {
+            this.ClickCell = ClickCell;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            Rules.setFlagRole(false);
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                Rules.setFlagRole(true);
+            }
+            if (!ClickCell.isRevealed() && !Rules.GameOver) {
+                new InputCellHandler(ClickCell).start();
+            }
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            if (!ClickCell.isRevealed())
+                ClickCell.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            ClickCell.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
     }
 }
