@@ -3,8 +3,8 @@ package Logic;
 import Screen.GUI;
 
 public class InputCellHandler extends Thread {
-    public Cell HandledCell;
     public static int HandledCellsNumber;
+    public Cell HandledCell;
 
     public InputCellHandler(Cell cell) {
         super("Input Cell Handler Thread For Cell[" + cell.getRow() + "][" + cell.getColumn() + "]");
@@ -27,7 +27,10 @@ public class InputCellHandler extends Thread {
                 if (Rules.isFlagRole()) {
                     OperateFlagCell(Choosencell);
                 } else {
-                    Grid.Explore(Game.CurrentPlayer, Choosencell);
+                    if (!HandledCell.isFlag())
+                        Grid.Explore(Game.CurrentPlayer, Choosencell);
+                    else
+                        return;
                 }
                 Rules.CheckWin(Game.CurrentPlayer);
                 Rules.CheckGameOver();
@@ -36,7 +39,7 @@ public class InputCellHandler extends Thread {
         }
     }
 
-    public static void OperateFlagCell(Cell choosencell) {
+    public void OperateFlagCell(Cell choosencell) {
         if (!choosencell.isFlag()) {
             if (!choosencell.isRevealed()) {
                 choosencell.setFlag(true);
