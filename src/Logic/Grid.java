@@ -128,13 +128,14 @@ public class Grid implements java.io.Serializable {
         if (cell.isRevealed() || cell.isFlag())
             System.out.println("Not Allowed To Explore All Ready Revealed Cell Or Flagged Cell");
         else if (cell.getValue() == 'X') {
+            cell.setRevealed(true);
+            Grid.RevealedCellsNumber++;
             if (!Game.Multiplier) {
                 Grid.setMinedCellsVisible();
                 Rules.GameOver = true;
                 Rules.setWin(false);
                 Rules.Losers.add(player);
             }
-            cell.setRevealed(true);
             if (Game.ShowMethod.equals("GUI")) {
                 GUI.UpdateCell(cell);
                 if (Game.Multiplier)
