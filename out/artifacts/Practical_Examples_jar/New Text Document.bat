@@ -1,0 +1,1 @@
+java -verbose -jar Practical_Examples.jar

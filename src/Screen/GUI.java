@@ -26,6 +26,8 @@ public class GUI implements java.io.Serializable {
     public static Icon LoadIcon;
     public static Icon How_To_Play;
     public static Icon About;
+    public static Icon Player;
+    public static Icon StopWatch;
     public static ImageIcon MainFrameIcon;
     public static Timer CountDownTimer;
 
@@ -44,8 +46,9 @@ public class GUI implements java.io.Serializable {
         TopInformationPanel = new JPanel();
         initTopInformationPanel();
 
-        MainFrame.pack();
 
+        MainFrame.pack();
+        MainFrame.setVisible(true);
 
     }
 
@@ -57,6 +60,16 @@ public class GUI implements java.io.Serializable {
         }
         try {
             MineIcon = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/Mine.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Mine Icon", "Mine Icon Is Missing!");
+        }
+        try {
+            StopWatch = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/stopwatch.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Mine Icon", "Mine Icon Is Missing!");
+        }
+        try {
+            Player = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/player.png")));
         } catch (Exception e) {
             ShowErrorMessage("Mine Icon", "Mine Icon Is Missing!");
         }
@@ -107,7 +120,6 @@ public class GUI implements java.io.Serializable {
         });
         MainFrame.setSize(800, 600);
         MainFrame.setLocation(0, 0);
-        MainFrame.setVisible(true);
         MainFrame.setIconImage(MainFrameIcon.getImage());
     }
 
@@ -116,7 +128,7 @@ public class GUI implements java.io.Serializable {
         JMenuItem newGameItem = new JMenuItem(new AbstractAction("New Game") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MainFrame.setVisible(false);
+                MainFrame.dispose();
                 CountDownTimer.stop();
                 Rules.StartNewGame();
                 Rules.AddPlayers();
@@ -237,8 +249,10 @@ public class GUI implements java.io.Serializable {
     static public void initTopInformationPanel() {
         TopInformationPanel.setLayout(new GridLayout(1, 2));
         TimeLabel = new JLabel("Time : 0");
+        TimeLabel.setIcon(StopWatch);
         TopInformationPanel.add(TimeLabel);
         CurrentPlayerLabel = new JLabel("Current Player : ");
+        CurrentPlayerLabel.setIcon(Player);
         TopInformationPanel.add(CurrentPlayerLabel);
         MainFrame.add(TopInformationPanel, "North");
         CountDownTimer = new Timer(1000, new ActionListener() {
