@@ -28,6 +28,15 @@ public class GUI implements java.io.Serializable {
     public static Icon About;
     public static Icon Player;
     public static Icon StopWatch;
+    public static Icon Colors;
+    public static Icon Names;
+    public static Icon Players;
+    public static Icon Winner;
+    public static Icon Loser;
+    public static Icon GameOver;
+    public static Icon Restart;
+    public static Icon Exit;
+    public static ImageIcon Difficulty;
     public static ImageIcon MainFrameIcon;
     public static Timer CountDownTimer;
 
@@ -71,6 +80,51 @@ public class GUI implements java.io.Serializable {
             Player = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/player.png")));
         } catch (Exception e) {
             ShowErrorMessage("Mine Icon", "Player Icon Is Missing!");
+        }
+        try {
+            Players = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/players.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Mine Icon", "Players Icon Is Missing!");
+        }
+        try {
+            Names = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/names.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Mine Icon", "Names Icon Is Missing!");
+        }
+        try {
+            Colors = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/colors.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Mine Icon", "Colors Icon Is Missing!");
+        }
+        try {
+            Difficulty = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/difficulty.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Mine Icon", "Difficulty Icon Is Missing!");
+        }
+        try {
+            GameOver = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/gameOver.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Mine Icon", "GameOver Icon Is Missing!");
+        }
+        try {
+            Winner = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/winner.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Mine Icon", "Winner Icon Is Missing!");
+        }
+        try {
+            Loser = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/loser.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Mine Icon", "Loser Icon Is Missing!");
+        }
+        try {
+            Restart = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/restart.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Mine Icon", "Restart Icon Is Missing!");
+        }
+        try {
+            Exit = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/exit.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Mine Icon", "Exit Icon Is Missing!");
         }
         try {
             NewIcon = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/New.png")));
@@ -124,6 +178,16 @@ public class GUI implements java.io.Serializable {
 
     static public void initMainMenu() {
         JMenu gameMenu = new JMenu("Game");
+
+        JMenuItem restartGameItem = new JMenuItem(new AbstractAction("Restart Game") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame.dispose();
+                CountDownTimer.stop();
+                initGridPanel();
+                //Rules.AddPlayers();
+            }
+        });
         JMenuItem newGameItem = new JMenuItem(new AbstractAction("New Game") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -169,12 +233,30 @@ public class GUI implements java.io.Serializable {
                     ShowInfoMessage("Game Load", "Data Has Been Loaded Successfully");
             }
         });
+        JMenuItem exitGameItem = new JMenuItem(new AbstractAction("Exit") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    SaveGame.SaveCurrentGame("Auto Save");
+                } catch (Exception ex) {
+                    ShowErrorMessage("Game Save", ex.getMessage());
+                }
+                MainFrame.dispose();
+                System.exit(0);
+            }
+        });
+        restartGameItem.setIcon(Restart);
         newGameItem.setIcon(NewIcon);
         saveGameItem.setIcon(SaveIcon);
         loadGameItem.setIcon(LoadIcon);
+        exitGameItem.setIcon(Exit);
+        gameMenu.add(restartGameItem);
+        gameMenu.addSeparator();
         gameMenu.add(newGameItem);
         gameMenu.add(saveGameItem);
         gameMenu.add(loadGameItem);
+        gameMenu.addSeparator();
+        gameMenu.add(exitGameItem);
         JMenu HelpMenu = new JMenu("Help");
         JMenuItem howToPlay = new JMenuItem(new AbstractAction("How To Play") {
             @Override
@@ -456,10 +538,24 @@ public class GUI implements java.io.Serializable {
                 int NumberOfPlayers = 1;
                 while (true) {
                     try {
-                        NumberOfPlayersString = JOptionPane.showInputDialog(null, "Enter The Number Of Players :", "Add Players", JOptionPane.QUESTION_MESSAGE);
-                        NumberOfPlayers = Integer.parseInt(NumberOfPlayersString);
-                        if (NumberOfPlayers < 1 || NumberOfPlayers > 10)
-                            throw new RuntimeException();
+                        JSlider slider = new JSlider(JSlider.HORIZONTAL, 1, 10, 1);
+                        slider.setMajorTickSpacing(1);
+                        slider.setPaintLabels(true);
+                        slider.setPaintTicks(true);
+                        JLabel enterN = new JLabel("Enter The Number Of Players : ");
+                        JPanel enterPlayers = new JPanel(new GridLayout(2, 1));
+                        enterPlayers.add(enterN);
+                        enterPlayers.add(slider);
+
+                        int result = JOptionPane.showOptionDialog(null, enterPlayers, "Add Players", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, Players, new String[]{"OK"}, null);
+                        if (result == 0)
+                            NumberOfPlayers = slider.getValue();
+                        else
+                            System.exit(0);
+//                        NumberOfPlayersString = JOptionPane.showInputDialog(null, "Enter The Number Of Players :", "Add Players", JOptionPane.QUESTION_MESSAGE);
+//                        NumberOfPlayers = Integer.parseInt(NumberOfPlayersString);
+//                        if (NumberOfPlayers < 1 || NumberOfPlayers > 10)
+//                            throw new RuntimeException();
                         break;
                     } catch (Exception e) {
                         ShowErrorMessage("Error", "An Error Occurred. Pleas Try Again !");
@@ -477,13 +573,14 @@ public class GUI implements java.io.Serializable {
                 }
 
                 // Show the player name dialog
-                int result = JOptionPane.showConfirmDialog(null, InputsPanel, "Enter Players Name :", JOptionPane.DEFAULT_OPTION);
-                if (result == JOptionPane.OK_OPTION) {
+                int result = JOptionPane.showOptionDialog(null, InputsPanel, "Enter Players Name :", JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE,Names, new String[]{"OK"}, null);
+                if (result == 0) {
                     // Get the player names from the text fields
                     for (int i = 0; i < NumberOfPlayers; i++) {
                         Game.addPlayer(PlayersNamesFields[i].getText());
                     }
-                }
+                }else
+                    System.exit(0);
                 //GIVING COLORS TO PLAYERS
                 if (Game.Players.size() > 1) {
                     // Create a panel with labels for each player
@@ -501,7 +598,7 @@ public class GUI implements java.io.Serializable {
                     }
 
                     // Show the player color dialog
-                    JOptionPane.showMessageDialog(null, PlayersColorLabel, "Players Colors", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showOptionDialog(null, PlayersColorLabel, "Players Colors", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE,Colors,new String[]{"OK"},null);
                 }
                 ChooseDifficulty();
                 break;
@@ -523,6 +620,7 @@ public class GUI implements java.io.Serializable {
             JLabel WinnerColoredNameLapel = new JLabel(Rules.Winner.getName());
             WinnerColoredNameLapel.setForeground(Rules.Winner.getColor());
             JLabel WinnerLabel = new JLabel("Is Winner !");
+            WinnerLabel.setIcon(Winner);
             WinnerLabel.setForeground(Color.BLACK);
             JPanel WinnerPanel = new JPanel();
             WinnerPanel.add(WinnerColoredNameLapel);
@@ -531,6 +629,7 @@ public class GUI implements java.io.Serializable {
         } else {
             JLabel LooserNameLapel = new JLabel(Rules.Losers.get(0).getName());
             JLabel LooserLabel = new JLabel("Is Looser !");
+            LooserLabel.setIcon(Loser);
             JPanel LooserPanel = new JPanel();
             LooserPanel.add(LooserNameLapel);
             LooserPanel.add(LooserLabel);
@@ -548,14 +647,17 @@ public class GUI implements java.io.Serializable {
             PlayersResultsPanel.add(playerPanel);
         }
         // Show the player color dialog
-        JOptionPane.showMessageDialog(null, PlayersResultsPanel, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showOptionDialog(null, PlayersResultsPanel, "Game Over", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE,GameOver,new String[]{"OK"},null);
     }
 
     public static void ChooseDifficulty() {
 
         JDialog difficultyDialog = new JDialog();
+        difficultyDialog.setIconImage(Difficulty.getImage());
+        difficultyDialog.setLocationRelativeTo(null);
         difficultyDialog.setTitle("Choose Difficulty");
         difficultyDialog.setModal(true);
+        difficultyDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
         String[] difficulties = {"Easy", "Medium", "Hard", "Expert"};
         int[][] grids = {{10, 10, 15}, {15, 15, 35}, {20, 20, 75}, {25, 26, 125}};
