@@ -3,36 +3,24 @@ package Logic;
 import Screen.Console;
 import Screen.GUI;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Rules implements java.io.Serializable {
-    static private boolean Win;
-    static private boolean FlagRole;
     public static boolean GameOver;
     public static Player Winner;
     public static ArrayList<Player> Losers;
     public static Color Role;
     public static Color[] PlayersColor;
     public static int ColorIndex;
+    static private boolean Win;
+    static private boolean FlagRole;
 
     static public void StartNewGame() {
-//        try {
-//            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException |
-//                 ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-        /*try {
+        try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
+                if ("Nimbus".equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -40,7 +28,7 @@ public class Rules implements java.io.Serializable {
         } catch (UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException |
                  ClassNotFoundException e) {
             throw new RuntimeException(e);
-        }*/
+        }
 
         GameOver = false;
         Win = true;
@@ -50,7 +38,10 @@ public class Rules implements java.io.Serializable {
         initPlayersColor();
         ColorIndex = 0;
         InputCellHandler.HandledCellsNumber = 0;
-        Grid.init(15, 15, 75);
+        if (Grid.rows == 0)
+            Grid.init(15, 15, 75);
+        else
+            Grid.init(Grid.rows,Grid.columns,Grid.MinesNumber);
         if (Game.ShowMethod.equals("GUI")) {
             GUI.init();
             GUI.Start();
@@ -83,110 +74,6 @@ public class Rules implements java.io.Serializable {
                 }
             }
         }
-    }
-
-    public static class GameTime implements java.io.Serializable {
-        public static Timer CountUpTimer;
-        public static Timer CountDownTimer;
-        public static TimerTask CountUpTask;
-        public static TimerTask CountDownTask;
-        public static int TimePassed;
-        public static int TimeLeft;
-        public static int MaxTimeLimit;
-        public static int MinTimeLimit;
-
-        static public void SetMaxTimeLimit(int maxTimeLimit) {
-            MaxTimeLimit = maxTimeLimit;
-        }
-
-        static public void SetMinTimeLimit(int minTimeLimit) {
-            MinTimeLimit = minTimeLimit;
-        }
-
-        static public void StartCountUpTimer() {
-            TimePassed = 0;
-            CountUpTimer = new Timer();
-            CountUpTask = new TimerTask() {
-                @Override
-                public void run() {
-                    TimePassed++;
-                    if (TimePassed > MaxTimeLimit) {
-                        CountUpTimer.cancel();
-                    }
-                }
-            };
-            CountUpTimer.schedule(CountUpTask, 0, 1000);
-
-        }
-
-        static public void StartCountdownTimer() {
-            TimeLeft = MinTimeLimit;
-            CountDownTimer = new Timer();
-            CountDownTask = new TimerTask() {
-                @Override
-                public void run() {
-                    TimeLeft--;
-                    if (TimeLeft < 1) {
-                        CountDownTimer.cancel();
-                    }
-                    GUI.TimeLabel.setText("Time : " + Rules.GameTime.TimeLeft);
-                }
-            };
-            CountDownTimer.schedule(CountDownTask, 0, 1000);
-        }
-
-        static public void PauseCountUpTimer() {
-            try {
-                CountUpTimer.cancel();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        static public void ResumeCountUpTimer() {
-            try {
-                CountUpTimer = new Timer();
-                TimerTask ContinueCountUpTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        TimePassed++;
-                        if (TimePassed > MaxTimeLimit) {
-                            CountUpTimer.cancel();
-                        }
-                    }
-                };
-                CountUpTimer.schedule(ContinueCountUpTask, 0, 1000);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        static public void PauseCountDownTimer() {
-            try {
-                CountDownTimer.cancel();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        static public void ResumeCountDownTimer() {
-            try {
-                CountDownTimer = new Timer();
-                TimerTask ContinueCountDownTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        TimeLeft--;
-                        if (TimeLeft == 0) {
-                            CountDownTimer.cancel();
-                        }
-                    }
-                };
-                CountDownTimer.schedule(ContinueCountDownTask, 0, 1000);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
     }
 
     static public void CheckWin(Player CurrentRolePlayer) {
@@ -303,5 +190,12 @@ public class Rules implements java.io.Serializable {
         if (Grid.rows == 25 && Grid.columns == 26) {
             player.addScore(-50);
         }
+    }
+
+    public static class GameTime implements java.io.Serializable {
+        public static int TimePassed;
+        public static int TimeLeft;
+        public static int MaxTimeLimit;
+        public static int MinTimeLimit;
     }
 }

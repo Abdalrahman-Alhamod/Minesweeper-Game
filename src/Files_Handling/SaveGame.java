@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 public class SaveGame {
     static GameData CurrentGameData;
     static String fileName;
+
     static public void SaveCurrentGame(String filename) {
         // Create a GameData object to store the game data
         CurrentGameData = new GameData();

@@ -9,6 +9,8 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class GUI implements java.io.Serializable {
@@ -35,6 +37,8 @@ public class GUI implements java.io.Serializable {
     public static Icon Loser;
     public static Icon GameOver;
     public static Icon Restart;
+    public static Icon Tutorial;
+    public static Icon Innovation;
     public static Icon Exit;
     public static ImageIcon Difficulty;
     public static ImageIcon MainFrameIcon;
@@ -56,7 +60,7 @@ public class GUI implements java.io.Serializable {
         initTopInformationPanel();
 
         MainFrame.pack();
-        MainFrame.setVisible(true);
+
 
     }
 
@@ -74,57 +78,67 @@ public class GUI implements java.io.Serializable {
         try {
             StopWatch = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/stopwatch.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Stop Watch Icon Is Missing!");
+            ShowErrorMessage("Stop Watch Icon", "Stop Watch Icon Is Missing!");
         }
         try {
             Player = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/player.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Player Icon Is Missing!");
+            ShowErrorMessage("Player Icon", "Player Icon Is Missing!");
         }
         try {
             Players = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/players.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Players Icon Is Missing!");
+            ShowErrorMessage("Players Icon", "Players Icon Is Missing!");
         }
         try {
             Names = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/names.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Names Icon Is Missing!");
+            ShowErrorMessage("Names Icon", "Names Icon Is Missing!");
         }
         try {
             Colors = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/colors.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Colors Icon Is Missing!");
+            ShowErrorMessage("Colors Icon", "Colors Icon Is Missing!");
         }
         try {
             Difficulty = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/difficulty.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Difficulty Icon Is Missing!");
+            ShowErrorMessage("Difficulty Icon", "Difficulty Icon Is Missing!");
         }
         try {
             GameOver = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/gameOver.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "GameOver Icon Is Missing!");
+            ShowErrorMessage("GameOver Icon", "GameOver Icon Is Missing!");
+        }
+        try {
+            Innovation = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/innovation.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Innovation Icon", "Innovation Icon Is Missing!");
+        }
+        try {
+            Tutorial = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/tutorial.png")));
+        } catch (Exception e) {
+            ShowErrorMessage("Tutorial Icon", "Tutorial Icon Is Missing!");
         }
         try {
             Winner = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/winner.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Winner Icon Is Missing!");
+            ShowErrorMessage("Winner Icon", "Winner Icon Is Missing!");
         }
         try {
             Loser = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/loser.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Loser Icon Is Missing!");
+            ShowErrorMessage("Loser Icon", "Loser Icon Is Missing!");
         }
         try {
             Restart = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/restart.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Restart Icon Is Missing!");
+            ShowErrorMessage("Restart Icon", "Restart Icon Is Missing!");
         }
         try {
             Exit = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/exit.png")));
         } catch (Exception e) {
-            ShowErrorMessage("Mine Icon", "Exit Icon Is Missing!");
+            ShowErrorMessage("Exit Icon", "Exit Icon Is Missing!");
         }
         try {
             NewIcon = new ImageIcon(Objects.requireNonNull(GUI.class.getClassLoader().getResource("Icons/New.png")));
@@ -184,8 +198,13 @@ public class GUI implements java.io.Serializable {
             public void actionPerformed(ActionEvent e) {
                 MainFrame.dispose();
                 CountDownTimer.stop();
-                initGridPanel();
-                //Rules.AddPlayers();
+                ArrayList<Player> oldPlayers = Game.Players;
+                for (Player player : oldPlayers) {
+                    player.setCurrentScore(0);
+                }
+                Game.init();
+                Game.Players = oldPlayers;
+                MainFrame.setVisible(true);
             }
         });
         JMenuItem newGameItem = new JMenuItem(new AbstractAction("New Game") {
@@ -229,6 +248,7 @@ public class GUI implements java.io.Serializable {
                 GUI.init();
                 GUI.Start();
                 UpdateGrid();
+                MainFrame.setVisible(true);
                 if (!DataLoadError)
                     ShowInfoMessage("Game Load", "Data Has Been Loaded Successfully");
             }
@@ -261,27 +281,53 @@ public class GUI implements java.io.Serializable {
         JMenuItem howToPlay = new JMenuItem(new AbstractAction("How To Play") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String message = "The game is played on a grid of cells, where some of the cells contain mines.\n The goal of the game is to reveal all the cells that do not contain mines, without revealing any mines.\n" +
-                        "\n" +
-                        "The player can left-click on a cell to reveal it. If the revealed cell contains a mine,\n the player loses the game. If it does not contain a mine \n the cell will show a number indicating the number of mines in the surrounding cells.\n" +
-                        "\n" +
-                        "The player can right-click on a cell to mark it as potentially containing a mine.\n This can be helpful in keeping track of which cells the player thinks might contain mines.\n" +
-                        "\n" +
-                        "The player can left-click on a cell that has already been revealed to reveal all\n the surrounding cells that have not been marked as potentially containing mines.\n This can be useful if the player is confident that all the surrounding cells do not contain mines.\n" +
-                        "\n" +
-                        "The game is won when all the cells that do not contain mines have been revealed.\n" +
-                        "\n" +
-                        "The game has four difficulty levels: easy, medium, hard, and expert.\n The easy level has a smaller grid with fewer mines, while the expert level has a larger grid with more mines.\n" +
-                        "\n" +
-                        "The player can choose a difficulty level by clicking on the corresponding button in the \"Choose Difficulty\" dialog.\n Once a difficulty level has been selected, a new game will start with the chosen settings.";
-                ShowInfoMessage("How To Play", message);
+                String message = "Minesweeper rules are very simple :" +
+                        " \n- The board is divided into cells, with mines randomly distributed." +
+                        " \n- To win, you need to open all the cells." +
+                        " \n- The number on a cell shows the number of mines adjacent to it." +
+                        " \n- Using this information, you can determine cells that are safe," +
+                        " and cells that contain mines." +
+                        " \n- Cells suspected of being mines can be marked with a flag using the right mouse button";
+
+                JOptionPane.showOptionDialog(null,message,"How To Play", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE,Tutorial,new String[]{"OK"},null);
             }
         });
         JMenuItem about = new JMenuItem(new AbstractAction("About") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String message = "MINESWEEPER GAME v1.4 \nAll Rights Reserved ©2022-2023\nBy Abd_HM ❤";
-                ShowInfoMessage("About", message);
+                String message = "<html>MINESWEEPER GAME v1.4 <br>By Abd_HM ❤<html/>";
+                JLabel aboutLabel = new JLabel(message);
+
+                JPanel contactPanel = new JPanel(new BorderLayout());
+                JLabel contactLabel = new JLabel("Contact Me : ");
+                contactLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+                contactPanel.add(contactLabel,BorderLayout.NORTH);
+
+                JButton emailLabel = createHyperlinkButton("E-mail", "mailto:abd.alrrahman.alhamod@gmail.com");
+                emailLabel.setBackground(new Color(204, 0, 0)); // Set color to dark red
+
+                JButton githubLabel = createHyperlinkButton("Github", "https://github.com/Abdalrahman-Alhamod");
+                githubLabel.setBackground(new Color(0, 153, 0)); // Set color to light green
+
+                JButton linkedInLabel = createHyperlinkButton("LinkedIn", "https://www.linkedin.com/in/abd-alrrahman-alhamod/");
+                linkedInLabel.setBackground(new Color(0, 102, 153)); // Set color to dark blue
+
+                JButton telegramLabel = createHyperlinkButton("Telegram", "https://t.me/Abd_Alrhman_Alhamod");
+                telegramLabel.setBackground(new Color(30, 87, 153)); // Set color to a Telegram-like blue
+
+
+                JPanel links = new JPanel(new GridLayout(2, 2));
+                links.add(emailLabel);
+                links.add(githubLabel);
+                links.add(linkedInLabel);
+                links.add(telegramLabel);
+                contactPanel.add(links,BorderLayout.CENTER);
+
+                JPanel aboutPanel = new JPanel(new BorderLayout());
+                aboutPanel.add(aboutLabel,BorderLayout.NORTH);
+                aboutPanel.add(contactPanel,BorderLayout.CENTER);
+
+                JOptionPane.showOptionDialog(null,aboutPanel,"About", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE,Innovation,new String[]{"OK"},null);
             }
         });
         howToPlay.setIcon(How_To_Play);
@@ -336,17 +382,14 @@ public class GUI implements java.io.Serializable {
         CurrentPlayerLabel.setIcon(Player);
         TopInformationPanel.add(CurrentPlayerLabel);
         MainFrame.add(TopInformationPanel, "North");
-        CountDownTimer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!Rules.GameOver) {
-                    TimeLabel.setText("Time : " + Rules.GameTime.TimeLeft);
-                    if (Rules.GameTime.TimeLeft == 0) {
-                        Rules.SwapPlayer();
-                        Rules.GameTime.TimeLeft++;
-                    }
-                    Rules.GameTime.TimeLeft--;
+        CountDownTimer = new Timer(1000, e -> {
+            if (!Rules.GameOver) {
+                TimeLabel.setText("Time : " + Rules.GameTime.TimeLeft);
+                if (Rules.GameTime.TimeLeft == 0) {
+                    Rules.SwapPlayer();
+                    Rules.GameTime.TimeLeft++;
                 }
+                Rules.GameTime.TimeLeft--;
             }
         });
     }
@@ -409,15 +452,13 @@ public class GUI implements java.io.Serializable {
                 cell.setIcon(GUI.MineIcon);
                 cell.setDisabledIcon(GUI.MineIcon);
                 cell.setBackground(Color.red);
-                cell.setFocusPainted(false);
-                cell.setContentAreaFilled(false);
             } else {
                 cell.setText(String.valueOf(cell.getValue()));
                 ColorNumbers(cell);
                 cell.setBackground(Color.WHITE);
-                cell.setFocusPainted(false);
-                cell.setContentAreaFilled(false);
             }
+            cell.setFocusPainted(false);
+            cell.setContentAreaFilled(false);
             if (Game.Multiplier) {
                 cell.setBorder(new LineBorder(Game.CurrentPlayer.getColor(), 2));
                 cell.setCellColor(Game.CurrentPlayer.getColor());
@@ -495,6 +536,7 @@ public class GUI implements java.io.Serializable {
                 GUI.init();
                 GUI.Start();
                 GUI.UpdateGrid();
+                MainFrame.setVisible(true);
                 if (!DataLoadError)
                     ShowInfoMessage("Game Load", "Data Has Been Loaded Successfully");
             } else {
@@ -534,7 +576,6 @@ public class GUI implements java.io.Serializable {
     static public void AddPlayers() {
         while (true) {
             try {
-                String NumberOfPlayersString;
                 int NumberOfPlayers = 1;
                 while (true) {
                     try {
@@ -552,10 +593,6 @@ public class GUI implements java.io.Serializable {
                             NumberOfPlayers = slider.getValue();
                         else
                             System.exit(0);
-//                        NumberOfPlayersString = JOptionPane.showInputDialog(null, "Enter The Number Of Players :", "Add Players", JOptionPane.QUESTION_MESSAGE);
-//                        NumberOfPlayers = Integer.parseInt(NumberOfPlayersString);
-//                        if (NumberOfPlayers < 1 || NumberOfPlayers > 10)
-//                            throw new RuntimeException();
                         break;
                     } catch (Exception e) {
                         ShowErrorMessage("Error", "An Error Occurred. Pleas Try Again !");
@@ -573,13 +610,13 @@ public class GUI implements java.io.Serializable {
                 }
 
                 // Show the player name dialog
-                int result = JOptionPane.showOptionDialog(null, InputsPanel, "Enter Players Name :", JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE,Names, new String[]{"OK"}, null);
+                int result = JOptionPane.showOptionDialog(null, InputsPanel, "Enter Players Name :", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, Names, new String[]{"OK"}, null);
                 if (result == 0) {
                     // Get the player names from the text fields
                     for (int i = 0; i < NumberOfPlayers; i++) {
                         Game.addPlayer(PlayersNamesFields[i].getText());
                     }
-                }else
+                } else
                     System.exit(0);
                 //GIVING COLORS TO PLAYERS
                 if (Game.Players.size() > 1) {
@@ -598,7 +635,7 @@ public class GUI implements java.io.Serializable {
                     }
 
                     // Show the player color dialog
-                    JOptionPane.showOptionDialog(null, PlayersColorLabel, "Players Colors", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE,Colors,new String[]{"OK"},null);
+                    JOptionPane.showOptionDialog(null, PlayersColorLabel, "Players Colors", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, Colors, new String[]{"OK"}, null);
                 }
                 ChooseDifficulty();
                 break;
@@ -647,7 +684,7 @@ public class GUI implements java.io.Serializable {
             PlayersResultsPanel.add(playerPanel);
         }
         // Show the player color dialog
-        JOptionPane.showOptionDialog(null, PlayersResultsPanel, "Game Over", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE,GameOver,new String[]{"OK"},null);
+        JOptionPane.showOptionDialog(null, PlayersResultsPanel, "Game Over", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, GameOver, new String[]{"OK"}, null);
     }
 
     public static void ChooseDifficulty() {
@@ -659,10 +696,8 @@ public class GUI implements java.io.Serializable {
         difficultyDialog.setModal(true);
         difficultyDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
-        String[] difficulties = {"Easy", "Medium", "Hard", "Expert"};
         int[][] grids = {{10, 10, 15}, {15, 15, 35}, {20, 20, 75}, {25, 26, 125}};
-        Color[] colors = {Color.GREEN, Color.YELLOW, Color.RED, Color.GRAY};
-        JPanel buttonPanel = new JPanel(new GridLayout(difficulties.length, 1, 10, 10));
+        JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 10, 10));
 
         JButton EasyButton = new JButton("Easy");
         EasyButton.setPreferredSize(new Dimension(100, 65));
@@ -672,15 +707,13 @@ public class GUI implements java.io.Serializable {
         EasyLabel.setHorizontalAlignment(SwingConstants.CENTER);
         EasyPanel.add(EasyButton, BorderLayout.NORTH);
         EasyPanel.add(EasyLabel, BorderLayout.SOUTH);
-        EasyButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                difficultyDialog.dispose();
-                MainFrame.setVisible(false);
-                Grid.init(10, 10, 15);
-                GUI.init();
-                GUI.Start();
-            }
+        EasyButton.addActionListener(e -> {
+            difficultyDialog.dispose();
+            MainFrame.setVisible(false);
+            Grid.init(10, 10, 15);
+            GUI.init();
+            GUI.Start();
+            MainFrame.setVisible(true);
         });
         buttonPanel.add(EasyPanel);
 
@@ -692,16 +725,13 @@ public class GUI implements java.io.Serializable {
         MediumLabel.setHorizontalAlignment(SwingConstants.CENTER);
         MediumPanel.add(MediumButton, BorderLayout.NORTH);
         MediumPanel.add(MediumLabel, BorderLayout.SOUTH);
-        MediumButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                difficultyDialog.dispose();
-                MainFrame.setVisible(false);
-                Grid.init(15, 15, 35);
-                GUI.init();
-                GUI.Start();
-
-            }
+        MediumButton.addActionListener(e -> {
+            difficultyDialog.dispose();
+            MainFrame.setVisible(false);
+            Grid.init(15, 15, 35);
+            GUI.init();
+            GUI.Start();
+            MainFrame.setVisible(true);
         });
         buttonPanel.add(MediumPanel);
 
@@ -713,17 +743,14 @@ public class GUI implements java.io.Serializable {
         HardLabel.setHorizontalAlignment(SwingConstants.CENTER);
         HardPanel.add(HardButton, BorderLayout.NORTH);
         HardPanel.add(HardLabel, BorderLayout.SOUTH);
-        HardButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        HardButton.addActionListener(e -> {
 // code to start a new hard game
-                difficultyDialog.dispose();
-                MainFrame.setVisible(false);
-                Grid.init(20, 20, 75);
-                GUI.init();
-                GUI.Start();
-
-            }
+            difficultyDialog.dispose();
+            MainFrame.setVisible(false);
+            Grid.init(20, 20, 75);
+            GUI.init();
+            GUI.Start();
+            MainFrame.setVisible(true);
         });
         buttonPanel.add(HardPanel);
 
@@ -735,16 +762,13 @@ public class GUI implements java.io.Serializable {
         ExpertLabel.setHorizontalAlignment(SwingConstants.CENTER);
         ExpertPanel.add(ExpertButton, BorderLayout.NORTH);
         ExpertPanel.add(ExpertLabel, BorderLayout.SOUTH);
-        ExpertButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                difficultyDialog.dispose();
-                MainFrame.setVisible(false);
-                Grid.init(25, 26, 125);
-                GUI.init();
-                GUI.Start();
-
-            }
+        ExpertButton.addActionListener(e -> {
+            difficultyDialog.dispose();
+            MainFrame.setVisible(false);
+            Grid.init(25, 26, 125);
+            GUI.init();
+            GUI.Start();
+            MainFrame.setVisible(true);
         });
         buttonPanel.add(ExpertPanel);
 
@@ -794,5 +818,22 @@ public class GUI implements java.io.Serializable {
         public void mouseExited(MouseEvent e) {
             ClickCell.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
+    }
+    private static JButton createHyperlinkButton(String text, String link) {
+        JButton button = new JButton();
+        button.setText("<html><a href=\"" + link + "\"><b><font color=\"white\">" + text + "</font></b></a></html>");
+        button.setFocusPainted(false);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // Add an action listener to handle the button click event
+        button.addActionListener(e -> {
+            try {
+                Desktop.getDesktop().browse(new URI(link));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        return button;
     }
 }
