@@ -295,7 +295,7 @@ public class GUI implements java.io.Serializable {
         JMenuItem about = new JMenuItem(new AbstractAction("About") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String message = "<html>MINESWEEPER GAME v1.4 <br>By Abd_HM ❤<html/>";
+                String message = "<html>MINESWEEPER GAME v1.5 <br>By Abd_HM ❤<html/>";
                 JLabel aboutLabel = new JLabel(message);
 
                 JPanel contactPanel = new JPanel(new BorderLayout());
