@@ -691,7 +691,6 @@ public class GUI implements java.io.Serializable {
 
         JDialog difficultyDialog = new JDialog();
         difficultyDialog.setIconImage(Difficulty.getImage());
-        difficultyDialog.setLocationRelativeTo(null);
         difficultyDialog.setTitle("Choose Difficulty");
         difficultyDialog.setModal(true);
         difficultyDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -774,6 +773,8 @@ public class GUI implements java.io.Serializable {
 
         difficultyDialog.add(buttonPanel);
         difficultyDialog.setBounds(600, 250, 300, 400);
+        difficultyDialog.setLocationRelativeTo(null);
+        difficultyDialog.setResizable(false);
         difficultyDialog.setVisible(true);
 
 
